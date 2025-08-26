@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: boot-junit5-mockito-demo
+
+server:
+  port: 9001
