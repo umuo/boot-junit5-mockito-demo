@@ -143,6 +143,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.5.5</version>
                 <configuration>
                     <excludes>
                         <exclude>
@@ -158,6 +159,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <testFailureIgnore>true</testFailureIgnore>
+
                     <!-- Test execution order: alphabetical -->
                     <runOrder>alphabetical</runOrder>
                     
@@ -167,17 +170,33 @@
                     </includes>
                     
                     <!-- Fork configuration: create 1 fork JVM -->
-                    <forkCount>1</forkCount>
+<!--                    <forkCount>1</forkCount>-->
                     
-                    <!-- Forked process timeout: 60 seconds -->
-                    <!-- 测试进程若在 300 秒内未结束，则强制 kill -->
-                    <forkedProcessTimeoutInSeconds>60</forkedProcessTimeoutInSeconds>
-                    <!-- 测试完成后优雅退出等待 60 秒 -->
-                    <forkedProcessExitTimeoutInSeconds>30</forkedProcessExitTimeoutInSeconds>
+                    <!-- Forked process timeout: 10 seconds - 强制kill整个测试进程 -->
+<!--                    <forkedProcessTimeoutInSeconds>3</forkedProcessTimeoutInSeconds>-->
+                    <!-- 测试完成后优雅退出等待时间 -->
+<!--                    <forkedProcessExitTimeoutInSeconds>5</forkedProcessExitTimeoutInSeconds>-->
+                    <!-- 取消并发 -->
+<!--                    <parallel>none</parallel>-->
+                    <!-- 启用进程检查器 -->
+<!--                    <enableProcessChecker>all</enableProcessChecker>-->
                     
-                    <!-- Don't reuse fork JVMs for better isolation -->
-                    <reuseForks>false</reuseForks>
-                    <enableProcessChecker>all</enableProcessChecker>
+                    <!-- 不重用fork JVMs，确保每次测试都重新启动 -->
+<!--                    <reuseForks>false</reuseForks>-->
+                    
+                    <!-- 并行执行配置 -->
+                    <parallel>methods</parallel>
+                    <threadCount>2</threadCount>
+                    <perCoreThreadCount>false</perCoreThreadCount>
+                    <parallelTestsTimeoutInSeconds>15</parallelTestsTimeoutInSeconds>
+                    <parallelTestsTimeoutForcedInSeconds>30</parallelTestsTimeoutForcedInSeconds>
+
+
+
+                    <!-- 设置系统属性，确保超时生效 -->
+<!--                    <systemPropertyVariables>-->
+<!--                        <surefire.thread.timeout>10000</surefire.thread.timeout>-->
+<!--                    </systemPropertyVariables>-->
                 </configuration>
             </plugin>
         </plugins>

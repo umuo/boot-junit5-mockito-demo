@@ -3,14 +3,9 @@ package cn.lacknb.blog.bootjunit5mockitodemo.service;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * Async service demonstrating CompletableFuture.runAsync with custom thread pool
@@ -82,10 +77,14 @@ public class AsyncService {
 
     public void submitTask(String taskName) {
         logger.info("Starting task: {}", taskName);
-        try {
-            TimeUnit.SECONDS.sleep(20);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        int count = 10;
+        while (count > 0) {
+            try {
+                logger.info("Task is running: {}, count => {}", taskName, count--);
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -99,6 +98,40 @@ public class AsyncService {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    public void executeTaskWithNoSleep(String taskName) {
+        logger.info("Starting task: {}", taskName);
+        boolean flag = true;
+        while (true) {
+            if (flag) {
+                flag = false;
+                logger.info("executeTaskWithNoSleep Task is running: {}, flag => {}", taskName, flag);
+            }
+        }
+    }
+
+    /**
+     * 当前线程等待
+     */
+    public void futureJoin() {
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+            boolean flag = true;
+            while (true) {
+                if (flag) {
+                    flag = false;
+                    logger.info("threadWait Task is running: ");
+                }
+            }
+        }, customThreadPool);
+        // future.join();
+        try {
+            future.get();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
         }
     }
 }
