@@ -28,4 +28,9 @@ public class ThreadPoolConfig {
                 new LinkedBlockingQueue<>()
         );
     }
+
+    @Bean
+    public ExecutorService myExecutorService() {
+        return Executors.newFixedThreadPool(5);
+    }
 }

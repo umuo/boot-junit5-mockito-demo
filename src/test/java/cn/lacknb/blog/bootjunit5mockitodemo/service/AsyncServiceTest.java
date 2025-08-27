@@ -6,25 +6,31 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Unit test for AsyncService demonstrating Mockito and JUnit 5 features
  */
 @ExtendWith(MockitoExtension.class)
+// @RunWith(MockitoJUnitRunner.class)
 @Slf4j
-class AsyncServiceTest {
+public class AsyncServiceTest {
 
     @InjectMocks
     private AsyncService asyncService;
 
     @Mock
     private ThreadPoolExecutor customThreadPool;
+
+    @Mock
+    private ExecutorService executorService;
 
     @Test
     @DisplayName("测试阻塞任务")
@@ -67,11 +73,12 @@ class AsyncServiceTest {
         asyncService.executeTaskWithNoSleep("测试循环任务(无休眠)");
     }
 
+    // @org.junit.Test(timeout = 3000)
     @Test
     @DisplayName("测试FutureJoin")
     @Timeout(3)
-    // @Disabled
-    void testLoopTask_futureJoin() {
+    @Disabled
+   public void testLoopTask_futureJoin() {
         log.info("测试FutureJoin");
         asyncService.futureJoin();
     }

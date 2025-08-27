@@ -1,6 +1,7 @@
 package cn.lacknb.blog.bootjunit5mockitodemo.service;
 
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -12,12 +13,16 @@ import java.util.concurrent.*;
  * @author gitsilence
  */
 @Service
+@Slf4j
 public class AsyncService {
 
     private static final Logger logger = LoggerFactory.getLogger(AsyncService.class);
 
     @Resource(name = "customThreadPool")
     private ThreadPoolExecutor customThreadPool;
+
+    @Resource(name = "myExecutorService")
+    private ExecutorService executorService;
 
     /**
      * Business method that uses CompletableFuture.runAsync with custom thread pool
@@ -116,6 +121,7 @@ public class AsyncService {
      * 当前线程等待
      */
     public void futureJoin() {
+        log.info("futureJoint start ...");
         CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
             boolean flag = true;
             while (true) {
@@ -124,14 +130,7 @@ public class AsyncService {
                     logger.info("threadWait Task is running: ");
                 }
             }
-        }, customThreadPool);
-        // future.join();
-        try {
-            future.get();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+        }, executorService);
+        future.join();
     }
 }
